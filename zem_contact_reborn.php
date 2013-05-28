@@ -32,12 +32,11 @@ function zem_contact($atts, $thing = null)
             gTxt('warn_mail_unavailable');
     }
 
-    static $headers_sent = false;
-    if (!$headers_sent) {
+    if (headers_sent() === false)
+    {
         header('Last-Modified: '.gmdate('D, d M Y H:i:s',time()-3600*24*7).' GMT');
         header('Expires: '.gmdate('D, d M Y H:i:s',time()+600).' GMT');
         header('Cache-Control: no-cache, must-revalidate');
-        $headers_sent = true;
     }
 
     $nonce   = doSlash(ps('zem_contact_nonce'));
