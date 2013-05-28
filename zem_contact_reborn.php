@@ -37,7 +37,6 @@ new zem_contact_reborn();
 function zem_contact($atts, $thing = null)
 {
     extract(lAtts(array(
-        'copysender'   => 0,
         'form'         => '',
         'from'         => '',
         'label'        => gTxt('zem_contact_reborn_contact'),
