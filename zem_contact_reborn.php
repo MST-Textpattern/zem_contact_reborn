@@ -1,5 +1,39 @@
 <?php
 
+class zem_contact_reborn
+{
+    /**
+     * Constructor.
+     */
+
+    public function __construct()
+    {
+        register_callback(array($this, 'install'), 'plugin_lifecycle.zem_contact_reborn', 'installed');
+        register_callback(array($this, 'uninstall'), 'plugin_lifecycle.zem_contact_reborn', 'deleted');
+    }
+
+    /**
+     * Installer.
+     */
+
+    public function install()
+    {
+        set_pref('zem_contact_reborn_secret', md5(uniqid(mt_rand(), true)), 'zem_contact_reborn', PREF_HIDDEN, 'text_input', 80);
+    }
+
+    /**
+     * Uninstaller.
+     */
+
+    public function uninstall()
+    {
+        safe_delete('txp_prefs', "name like 'zem\_contact\_reborn\_%'");
+    }
+}
+
+new zem_contact_reborn();
+
+
 function zem_contact($atts, $thing = null)
 {
     global $sitename, $prefs, $production_status, $zem_contact_from,
