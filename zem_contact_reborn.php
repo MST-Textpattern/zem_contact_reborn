@@ -11,16 +11,16 @@ function zem_contact($atts, $thing = '')
         'form'        => '',
         'from'        => '',
         'from_form'    => '',
-        'label'        => zem_contact_gTxt('contact'),
+        'label'        => gTxt('zem_contact_reborn_contact'),
         'redirect'    => '',
         'show_error'    => 1,
         'show_input'    => 1,
         'send_article'    => 0,
-        'subject'    => zem_contact_gTxt('email_subject', html_entity_decode($sitename,ENT_QUOTES)),
+        'subject'    => gTxt('zem_contact_reborn_email_subject', array('{sitename}' => $sitename), false),
         'subject_form'    => '',
         'to'        => '',
         'to_form'    => '',
-        'thanks'    => graf(zem_contact_gTxt('email_thanks')),
+        'thanks'    => graf(gTxt('zem_contact_reborn_email_thanks')),
         'thanks_form'    => ''
     ), $atts));
 
@@ -31,7 +31,7 @@ function zem_contact($atts, $thing = '')
     if (!is_callable('mail'))
     {
         return ($production_status == 'live') ?
-            zem_contact_gTxt('mail_sorry') :
+            gTxt('zem_contact_reborn_mail_sorry') :
             gTxt('warn_mail_unavailable');
     }
 
@@ -54,7 +54,7 @@ function zem_contact($atts, $thing = '')
             if ($rs['used'])
             {
                 unset($zem_contact_error);
-                $zem_contact_error[] = zem_contact_gTxt('form_used');
+                $zem_contact_error[] = gTxt('zem_contact_reborn_form_used');
                 $renonce = true;
                 $_POST = array();
                 $_POST['zem_contact_submit'] = TRUE;
@@ -64,7 +64,7 @@ function zem_contact($atts, $thing = '')
         }
         else
         {
-            $zem_contact_error[] = zem_contact_gTxt('form_expired');
+            $zem_contact_error[] = gTxt('zem_contact_reborn_form_expired');
             $renonce = true;
         }
     }
@@ -85,9 +85,9 @@ function zem_contact($atts, $thing = '')
     if (empty($form))
     {
         $form = '
-<txp:zem_contact_text label="'.zem_contact_gTxt('name').'" /><br />
+<txp:zem_contact_text label="'.gTxt('zem_contact_reborn_name').'" /><br />
 <txp:zem_contact_email /><br />'.
-($send_article ? '<txp:zem_contact_email send_article="1" label="'.zem_contact_gTxt('recipient').'" /><br />' : '').
+($send_article ? '<txp:zem_contact_email send_article="1" label="'.gTxt('zem_contact_reborn_recipient').'" /><br />' : '').
 '<txp:zem_contact_textarea /><br />
 <txp:zem_contact_submit />
 ';
@@ -102,7 +102,7 @@ function zem_contact($atts, $thing = '')
 
     if (!$to and !$send_article)
     {
-        return zem_contact_gTxt('to_missing');
+        return gTxt('zem_contact_reborn_to_missing');
     }
 
     $out = '';
@@ -135,7 +135,7 @@ function zem_contact($atts, $thing = '')
         $evaluation =& get_zemcontact_evaluator();
         $clean = $evaluation->get_zemcontact_status();
         if ($clean != 0) {
-            return zem_contact_gTxt('spam');
+            return gTxt('zem_contact_reborn_spam');
         }
 
         if ($from_form)
@@ -175,7 +175,9 @@ function zem_contact($atts, $thing = '')
             $msg[] = trim(strip_tags(str_replace($s_ar,$r_ar,(trim(strip_tags($thisarticle['excerpt'])) ? $thisarticle['excerpt'] : $thisarticle['body']))));
             if (empty($zem_contact_recipient))
             {
-                return zem_contact_gTxt('field_missing', zem_contact_gTxt('recipient'));
+                return gTxt('zem_contact_reborn_field_missing', array(
+                    '{recipient}' => gTxt('zem_contact_reborn_recipient'),
+                ), false);
             }
             else
             {
@@ -251,7 +253,7 @@ function zem_contact($atts, $thing = '')
                 else
                 {
                     $uri = htmlspecialchars($uri);
-                    $refresh = zem_contact_gTxt('refresh');
+                    $refresh = gTxt('zem_contact_reborn_refresh');
                     echo <<<END
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -279,7 +281,7 @@ END;
 
         else
         {
-            $out .= graf(zem_contact_gTxt('mail_sorry'));
+            $out .= graf(gTxt('zem_contact_reborn_mail_sorry'));
         }
     }
 
@@ -313,7 +315,7 @@ function zem_contact_text($atts)
         'break'        => br,
         'default'    => '',
         'isError'    => '',
-        'label'        => zem_contact_gTxt('text'),
+        'label'        => gTxt('zem_contact_reborn_text'),
         'max'        => 100,
         'min'        => 0,
         'name'        => '',
@@ -337,19 +339,19 @@ function zem_contact_text($atts)
         {
             if (!$utf8len)
             {
-                $zem_contact_error[] = zem_contact_gTxt('invalid_utf8', $hlabel);
+                $zem_contact_error[] = gTxt('zem_contact_reborn_invalid_utf8', $hlabel);
                 $isError = "errorElement";
             }
 
             elseif ($min and $utf8len < $min)
             {
-                $zem_contact_error[] = zem_contact_gTxt('min_warning', $hlabel, $min);
+                $zem_contact_error[] = gTxt('zem_contact_reborn_min_warning', $hlabel, $min);
                 $isError = "errorElement";
             }
 
             elseif ($max and $utf8len > $max)
             {
-                $zem_contact_error[] = zem_contact_gTxt('max_warning', $hlabel, $max);
+                $zem_contact_error[] = gTxt('zem_contact_reborn_max_warning', $hlabel, $max);
                 $isError = "errorElement";
                 #$value = join('',array_slice($ar[0],0,$max));
             }
@@ -361,7 +363,7 @@ function zem_contact_text($atts)
         }
         elseif ($required)
         {
-            $zem_contact_error[] = zem_contact_gTxt('field_missing', $hlabel);
+            $zem_contact_error[] = gTxt('zem_contact_reborn_field_missing', $hlabel);
             $isError = "errorElement";
         }
     }
@@ -389,7 +391,7 @@ function zem_contact_textarea($atts)
         'cols'        => 58,
         'default'    => '',
         'isError'    => '',
-        'label'        => zem_contact_gTxt('message'),
+        'label'        => gTxt('zem_contact_reborn_message'),
         'max'        => 10000,
         'min'        => 0,
         'name'        => '',
@@ -414,19 +416,19 @@ function zem_contact_textarea($atts)
         {
             if (!$utf8len)
             {
-                $zem_contact_error[] = zem_contact_gTxt('invalid_utf8', $hlabel);
+                $zem_contact_error[] = gTxt('zem_contact_reborn_invalid_utf8', $hlabel);
                 $isError = "errorElement";
             }
 
             elseif ($min and $utf8len < $min)
             {
-                $zem_contact_error[] = zem_contact_gTxt('min_warning', $hlabel, $min);
+                $zem_contact_error[] = gTxt('zem_contact_reborn_min_warning', $hlabel, $min);
                 $isError = "errorElement";
             }
 
             elseif ($max and $utf8len > $max)
             {
-                $zem_contact_error[] = zem_contact_gTxt('max_warning', $hlabel, $max);
+                $zem_contact_error[] = gTxt('zem_contact_reborn_max_warning', $hlabel, $max);
                 $isError = "errorElement";
                 #$value = join('',array_slice($utf8ar[0],0,$max));
             }
@@ -439,7 +441,7 @@ function zem_contact_textarea($atts)
 
         elseif ($required)
         {
-            $zem_contact_error[] = zem_contact_gTxt('field_missing', $hlabel);
+            $zem_contact_error[] = gTxt('zem_contact_reborn_field_missing', $hlabel);
             $isError = "errorElement";
         }
     }
@@ -462,7 +464,7 @@ function zem_contact_email($atts)
     extract(zem_contact_lAtts(array(
         'default'    => '',
         'isError'    => '',
-        'label'        => zem_contact_gTxt('email'),
+        'label'        => gTxt('zem_contact_reborn_email'),
         'max'        => 100,
         'min'        => 0,
         'name'        => '',
@@ -480,7 +482,7 @@ function zem_contact_email($atts)
     {
         if (!is_valid_email($email))
         {
-            $zem_contact_error[] = zem_contact_gTxt('invalid_email', htmlspecialchars($email));
+            $zem_contact_error[] = gTxt('zem_contact_reborn_invalid_email', array('{email}' => $email));
             $isError = "errorElement";
         }
 
@@ -491,7 +493,7 @@ function zem_contact_email($atts)
 
             if (is_callable('checkdnsrr') and checkdnsrr('textpattern.com.','A') and !checkdnsrr($domain.'.','MX') and !checkdnsrr($domain.'.','A'))
             {
-                $zem_contact_error[] = zem_contact_gTxt('invalid_host', htmlspecialchars($domain));
+                $zem_contact_error[] = gTxt('zem_contact_reborn_invalid_host', htmlspecialchars($domain));
                 $isError = "errorElement";
             }
 
@@ -529,8 +531,8 @@ function zem_contact_select($atts)
         'break'        => ' ',
         'delimiter'    => ',',
         'isError'    => '',
-        'label'        => zem_contact_gTxt('option'),
-        'list'        => zem_contact_gTxt('general_inquiry'),
+        'label'        => gTxt('zem_contact_reborn_option'),
+        'list'        => gTxt('zem_contact_reborn_general_inquiry'),
         'required'    => 1,
         'selected'    => ''
     ), $atts));
@@ -552,14 +554,14 @@ function zem_contact_select($atts)
 
             else
             {
-                $zem_contact_error[] = zem_contact_gTxt('invalid_value', htmlspecialchars($label), htmlspecialchars($value));
+                $zem_contact_error[] = gTxt('zem_contact_reborn_invalid_value', htmlspecialchars($label), htmlspecialchars($value));
                 $isError = "errorElement";
             }
         }
 
         elseif ($required)
         {
-            $zem_contact_error[] = zem_contact_gTxt('field_missing', htmlspecialchars($label));
+            $zem_contact_error[] = gTxt('zem_contact_reborn_field_missing', htmlspecialchars($label));
             $isError = "errorElement";
         }
     }
@@ -591,7 +593,7 @@ function zem_contact_checkbox($atts)
         'break'        => ' ',
         'checked'    => 0,
         'isError'    => '',
-        'label'        => zem_contact_gTxt('checkbox'),
+        'label'        => gTxt('zem_contact_reborn_checkbox'),
         'name'        => '',
         'required'    => 1
     ), $atts));
@@ -604,7 +606,7 @@ function zem_contact_checkbox($atts)
 
         if ($required and !$value)
         {
-            $zem_contact_error[] = zem_contact_gTxt('field_missing', htmlspecialchars($label));
+            $zem_contact_error[] = gTxt('zem_contact_reborn_field_missing', htmlspecialchars($label));
             $isError = "errorElement";
         }
 
@@ -649,7 +651,7 @@ function zem_contact_secret($atts, $thing = '')
 
     extract(zem_contact_lAtts(array(
         'name'    => '',
-        'label'    => zem_contact_gTxt('secret'),
+        'label'    => gTxt('zem_contact_reborn_secret'),
         'value'    => ''
     ), $atts));
 
@@ -672,7 +674,7 @@ function zem_contact_radio($atts)
         'break'        => ' ',
         'checked'    => 0,
         'group'        => '',
-        'label'        => zem_contact_gTxt('option'),
+        'label'        => gTxt('zem_contact_reborn_option'),
         'name'        => ''
     ), $atts));
 
@@ -680,7 +682,7 @@ function zem_contact_radio($atts)
     static $cur_group = '';
 
     if (!$name and !$group and !$cur_name and !$cur_group) {
-        $cur_group = zem_contact_gTxt('radio');
+        $cur_group = gTxt('zem_contact_reborn_radio');
         $cur_name = $cur_group;
     }
     if ($group and !$name and $group != $cur_group) $name = $group;
@@ -717,7 +719,7 @@ function zem_contact_radio($atts)
 function zem_contact_send_article($atts)
 {
     if (!isset($_REQUEST['zem_contact_send_article'])) {
-        $linktext = (empty($atts['linktext'])) ? zem_contact_gTxt('send_article') : $atts['linktext'];
+        $linktext = (empty($atts['linktext'])) ? gTxt('zem_contact_reborn_send_article') : $atts['linktext'];
         $join = (empty($_SERVER['QUERY_STRING'])) ? '?' : '&';
         $href = $_SERVER['REQUEST_URI'].$join.'zem_contact_send_article=yes';
         return '<a href="'.htmlspecialchars($href).'">'.htmlspecialchars($linktext).'</a>';
@@ -729,7 +731,7 @@ function zem_contact_submit($atts, $thing)
 {
     extract(zem_contact_lAtts(array(
         'button'    => 0,
-        'label'        => zem_contact_gTxt('send')
+        'label'        => gTxt('zem_contact_reborn_send')
     ), $atts));
 
     $label = htmlspecialchars($label);
