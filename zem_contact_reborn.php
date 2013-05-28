@@ -6,7 +6,7 @@ function zem_contact($atts, $thing = '')
         $zem_contact_recipient, $zem_contact_error, $zem_contact_submit,
         $zem_contact_form, $zem_contact_labels, $zem_contact_values;
 
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'copysender'   => 0,
         'form'         => '',
         'from'         => '',
@@ -311,7 +311,7 @@ function zem_contact_text($atts)
 {
     global $zem_contact_error, $zem_contact_submit;
 
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'break'        => br,
         'default'    => '',
         'isError'    => '',
@@ -386,7 +386,7 @@ function zem_contact_textarea($atts)
 {
     global $zem_contact_error, $zem_contact_submit;
 
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'break'        => br,
         'cols'        => 58,
         'default'    => '',
@@ -461,7 +461,7 @@ function zem_contact_email($atts)
 {
     global $zem_contact_error, $zem_contact_submit, $zem_contact_from, $zem_contact_recipient;
 
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'default'    => '',
         'isError'    => '',
         'label'        => gTxt('zem_contact_reborn_email'),
@@ -526,7 +526,7 @@ function zem_contact_select($atts)
 {
     global $zem_contact_error, $zem_contact_submit;
 
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'name'        => '',
         'break'        => ' ',
         'delimiter'    => ',',
@@ -589,7 +589,7 @@ function zem_contact_checkbox($atts)
 {
     global $zem_contact_error, $zem_contact_submit;
 
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'break'        => ' ',
         'checked'    => 0,
         'isError'    => '',
@@ -631,7 +631,7 @@ function zem_contact_serverinfo($atts)
 {
     global $zem_contact_submit;
 
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'label'        => '',
         'name'        => ''
     ), $atts));
@@ -649,7 +649,7 @@ function zem_contact_secret($atts, $thing = '')
 {
     global $zem_contact_submit;
 
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'name'    => '',
         'label'    => gTxt('zem_contact_reborn_secret'),
         'value'    => ''
@@ -670,7 +670,7 @@ function zem_contact_radio($atts)
 {
     global $zem_contact_error, $zem_contact_submit, $zem_contact_values;
 
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'break'        => ' ',
         'checked'    => 0,
         'group'        => '',
@@ -729,7 +729,7 @@ function zem_contact_send_article($atts)
 
 function zem_contact_submit($atts, $thing)
 {
-    extract(zem_contact_lAtts(array(
+    extract(lAtts(array(
         'button'    => 0,
         'label'        => gTxt('zem_contact_reborn_send')
     ), $atts));
@@ -744,19 +744,6 @@ function zem_contact_submit($atts, $thing)
     {
         return '<input type="submit" class="zemSubmit" name="zem_contact_submit" value="'.$label.'" />';
     }
-}
-
-function zem_contact_lAtts($arr, $atts)
-{
-    foreach(array('button', 'copysender', 'checked', 'required', 'send_article', 'show_input', 'show_error') as $key)
-    {
-        if (isset($atts[$key]))
-        {
-            $atts[$key] = ($atts[$key] === 'yes' or intval($atts[$key])) ? 1 : 0;
-        }
-    }
-    if (isset($atts['break']) and $atts['break'] == 'br') $atts['break'] = '<br />';
-    return lAtts($arr, $atts);
 }
 
 class zemcontact_evaluation
