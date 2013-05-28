@@ -82,17 +82,6 @@ function zem_contact($atts, $thing = '')
 
     $form = ($form) ? fetch_form($form) : $thing;
 
-    if (empty($form))
-    {
-        $form = '
-<txp:zem_contact_text label="'.gTxt('zem_contact_reborn_name').'" /><br />
-<txp:zem_contact_email /><br />'.
-($send_article ? '<txp:zem_contact_email send_article="1" label="'.gTxt('zem_contact_reborn_recipient').'" /><br />' : '').
-'<txp:zem_contact_textarea /><br />
-<txp:zem_contact_submit />
-';
-    }
-
     $form = parse($form);
 
     if ($to_form)
