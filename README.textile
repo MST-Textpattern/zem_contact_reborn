@@ -1,0 +1,7 @@
+h1. zem_contact_reborn
+
+p. Flexible contact form plugin for "Textpattern CMS":http://textpattern.com.
+
+h2. Toolshed notice
+
+p. This is a toolshed project. Experimental and not part of the main supported product line of Rah. Not yet at least. Please use at your own risk.

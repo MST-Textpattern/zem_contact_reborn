@@ -1,0 +1,11 @@
+{
+    "name"        : "zem_contact_reborn",
+    "description" : "Flexible contact form plugin for Textpattern CMS",
+    "version"     : "0.1.0",
+    "type"        : 0,
+    "author"      : "Jukka Svahn",
+    "author_uri"  : "https://github.com/gocom/zem_contact_reborn",
+    "order"       : 5,
+    "flags"       : 0,
+    "help"        : {"file" : ["./README.textile"]}
+}
