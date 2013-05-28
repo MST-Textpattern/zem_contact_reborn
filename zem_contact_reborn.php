@@ -36,28 +36,31 @@ new zem_contact_reborn();
 
 function zem_contact($atts, $thing = null)
 {
-    global $sitename, $prefs, $production_status, $zem_contact_from,
-        $zem_contact_recipient, $zem_contact_error, $zem_contact_submit,
-        $zem_contact_form, $zem_contact_labels, $zem_contact_values;
-
     extract(lAtts(array(
         'copysender'   => 0,
         'form'         => '',
         'from'         => '',
         'label'        => gTxt('zem_contact_reborn_contact'),
         'redirect'     => '',
-        'show_error'   => 1,
-        'show_input'   => 1,
         'send_article' => 0,
-        'subject'      => gTxt('zem_contact_reborn_email_subject', array('{sitename}' => $sitename), false),
+        'subject'      => null,
         'to'           => '',
         'thanks'       => graf(gTxt('zem_contact_reborn_email_thanks')),
         'thanks_form'  => '',
     ), $atts));
 
-    unset($atts['show_error'], $atts['show_input']);
-    $zem_contact_form_id = md5(serialize($atts).preg_replace('/[\t\s\r\n]/','',$thing));
-    $zem_contact_submit = (ps('zem_contact_form_id') == $zem_contact_form_id);
+    if ($subject === null)
+    {
+        $subject = gTxt('zem_contact_reborn_email_subject', array(
+            '{sitename}' => get_pref('sitename'),
+        ), false);
+    }
+
+    extract(psa(array(
+        'zem_contact_id',
+        'zem_contact_stamp',
+        'zem_contact_token',
+    )));
 
     if (headers_sent() === false)
     {
@@ -66,214 +69,37 @@ function zem_contact($atts, $thing = null)
         header('Cache-Control: no-cache, must-revalidate');
     }
 
-    $nonce   = doSlash(ps('zem_contact_nonce'));
-    $renonce = false;
+    $form_id = md5(json_encode(array_merge($atts, array('thing' => $thing))));
 
-    if ($zem_contact_submit)
+    if ($zem_contact_id && $form_id === $zem_contact_id)
     {
-        safe_delete('txp_discuss_nonce', 'issue_time < date_sub(now(), interval 10 minute)');
-        if ($rs = safe_row('used', 'txp_discuss_nonce', "nonce = '$nonce'"))
+        // Validates the token.
+
+        if ($zem_contact_token !== md5(get_pref('zem_contact_reborn_secret') . $zem_contact_id . $zem_contact_stamp))
         {
-            if ($rs['used'])
-            {
-                unset($zem_contact_error);
-                $zem_contact_error[] = gTxt('zem_contact_reborn_form_used');
-                $renonce = true;
-                $_POST = array();
-                $_POST['zem_contact_submit'] = TRUE;
-                $_POST['zem_contact_form_id'] = $zem_contact_form_id;
-                $_POST['zem_contact_nonce'] = $nonce;
-            }
+            return;
         }
-        else
+
+        // Checks if the form is expired.
+
+        if ($zem_contact_stamp > strtotime('-2 hour'))
         {
-            $zem_contact_error[] = gTxt('zem_contact_reborn_form_expired');
-            $renonce = true;
+            return;
         }
+
+        // Checks if the form is used.
+
+        if (safe_row('used', 'txp_discuss_nonce', "nonce = '".doSlash($zem_contact_id)."' and used = 1 and issue_time = '".strftime('%Y-%m-%d %H:%M:%s', strtotime('+100 minute'))."'"))
+        {
+            $zem_contact_error[] = gTxt('zem_contact_reborn_form_used');
+        }
+
+        // Saving.
+
+        callback_event('zem_contact.send', '', 0, array(
+            'data' => $data,
+        ));
     }
-
-    if ($zem_contact_submit and $nonce and !$renonce)
-    {
-        $zem_contact_nonce = $nonce;
-    }
-
-    elseif (!$show_error or $show_input)
-    {
-        $zem_contact_nonce = md5(uniqid(rand(), true));
-        safe_insert('txp_discuss_nonce', "issue_time = now(), nonce = '$zem_contact_nonce'");
-    }
-
-    if ($thing === null)
-    {
-        $form = parse_form($form);
-    }
-    else
-    {
-        $form = parse($thing);
-    }
-
-    if (!$to and !$send_article)
-    {
-        return gTxt('zem_contact_reborn_to_missing');
-    }
-
-    $out = '';
-
-    if (!$zem_contact_submit) {
-      # don't show errors or send mail
-    }
-
-    elseif (!empty($zem_contact_error))
-    {
-        if ($show_error or !$show_input)
-        {
-            $out .= n.'<ul class="zemError">';
-
-            foreach (array_unique($zem_contact_error) as $error)
-            {
-                $out .= n.t.'<li>'.$error.'</li>';
-            }
-
-            $out .= n.'</ul>';
-
-            if (!$show_input) return $out;
-        }
-    }
-
-    elseif ($show_input and is_array($zem_contact_form))
-    {
-        /// load and check spam plugins/
-        callback_event('zemcontact.submit');
-        $evaluation =& get_zemcontact_evaluator();
-        $clean = $evaluation->get_zemcontact_status();
-        if ($clean != 0) {
-            return gTxt('zem_contact_reborn_spam');
-        }
-
-        $sep = !is_windows() ? "\n" : "\r\n";
-
-        $msg = array();
-
-        foreach ($zem_contact_labels as $name => $label)
-        {
-            if (!trim($zem_contact_values[$name])) continue;
-            $msg[] = $label.': '.$zem_contact_values[$name];
-        }
-
-        if ($send_article)
-        {
-            global $thisarticle;
-            $subject = str_replace('&#38;', '&', $thisarticle['title']);
-            $msg[] = permlinkurl($thisarticle);
-            $msg[] = $subject;
-            $s_ar = array('&#8216;', '&#8217;', '&#8220;', '&#8221;', '&#8217;', '&#8242;', '&#8243;', '&#8230;', '&#8211;', '&#8212;', '&#215;', '&#8482;', '&#174;', '&#169;', '&lt;', '&gt;', '&quot;', '&amp;', '&#38;', "\t", '<p');
-            if ($prefs['override_emailcharset'] and is_callable('utf8_decode')) {
-                $r_ar = array("'", "'", '"', '"', "'", "'", '"', '...', '-', '--', 'x', '[tm]', '(r)', '(c)', '<', '>', '"', '&', '&', ' ', "\n<p");
-            }
-            else
-            {
-                $r_ar = array('‘', '’', '“', '”', '’', '′', '″', '…', '–', '—', '×', '™', '®', '©', '<', '>', '"', '&', '&', ' ', "\n<p");
-            }
-            $msg[] = trim(strip_tags(str_replace($s_ar,$r_ar,(trim(strip_tags($thisarticle['excerpt'])) ? $thisarticle['excerpt'] : $thisarticle['body']))));
-            if (empty($zem_contact_recipient))
-            {
-                return gTxt('zem_contact_reborn_field_missing', array(
-                    '{recipient}' => gTxt('zem_contact_reborn_recipient'),
-                ), false);
-            }
-            else
-            {
-                $to = $zem_contact_recipient;
-            }
-        }
-
-        $msg = join("\n\n", $msg);
-        $msg = str_replace("\r\n", "\n", $msg);
-        $msg = str_replace("\r", "\n", $msg);
-        $msg = str_replace("\n", $sep, $msg);
-
-        if ($from)
-        {
-            $reply = $zem_contact_from;
-        }
-
-        else
-        {
-            $from = $zem_contact_from;
-            $reply = '';
-        }
-
-        $from    = zem_contact_strip($from);
-        $to      = zem_contact_strip($to);
-        $subject = zem_contact_strip($subject);
-        $reply   = zem_contact_strip($reply);
-        $msg     = zem_contact_strip($msg, FALSE);
-
-        if ($prefs['override_emailcharset'] and is_callable('utf8_decode'))
-        {
-            $charset = 'ISO-8859-1';
-            $subject = utf8_decode($subject);
-            $msg     = utf8_decode($msg);
-        }
-
-        else
-        {
-            $charset = 'UTF-8';
-        }
-
-        $subject = zem_contact_mailheader($subject, 'text');
-
-        $headers = 'From: '.$from.
-            ($reply ? ($sep.'Reply-To: '.$reply) : '').
-            $sep.'X-Mailer: Textpattern (zem_contact_reborn)'.
-            $sep.'X-Originating-IP: '.zem_contact_strip((!empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'].' via ' : '').$_SERVER['REMOTE_ADDR']).
-            $sep.'Content-Transfer-Encoding: 8bit'.
-            $sep.'Content-Type: text/plain; charset="'.$charset.'"';
-
-        safe_update('txp_discuss_nonce', "used = '1', issue_time = now()", "nonce = '$nonce'");
-
-        if (mail($to, $subject, $msg, $headers))
-        {
-            $_POST = array();
-
-            if ($copysender and $zem_contact_from)
-            {
-                mail(zem_contact_strip($zem_contact_from), $subject, $msg, $headers);
-            }
-
-            if ($redirect)
-            {
-                txp_die($msg, '302', hu.ltrim($redirect, '/'));
-            }
-            else
-            {
-                return '<div class="zemThanks" id="zcr'.$zem_contact_form_id.'">' .
-                    ($thanks_form ? fetch_form($thanks_form) : $thanks) .
-                    '</div>';
-            }
-        }
-
-        else
-        {
-            $out .= graf(gTxt('zem_contact_reborn_mail_sorry'));
-        }
-    }
-
-    if ($show_input and !$send_article or gps('zem_contact_send_article'))
-    {
-        return '<form method="post"'.((!$show_error and $zem_contact_error) ? '' : ' id="zcr'.$zem_contact_form_id.'"').' class="zemContactForm" action="'.htmlspecialchars(serverSet('REQUEST_URI')).'#zcr'.$zem_contact_form_id.'">'.
-            ( $label ? n.'<fieldset>' : n.'<div>' ).
-            ( $label ? n.'<legend>'.htmlspecialchars($label).'</legend>' : '' ).
-            $out.
-            n.'<input type="hidden" name="zem_contact_nonce" value="'.$zem_contact_nonce.'" />'.
-            n.'<input type="hidden" name="zem_contact_form_id" value="'.$zem_contact_form_id.'" />'.
-            $form.
-            callback_event('zemcontact.form').
-            ( $label ? (n.'</fieldset>') : (n.'</div>') ).
-            n.'</form>';
-    }
-
-    return '';
 }
 
 function zem_contact_strip($str, $header = TRUE) {
