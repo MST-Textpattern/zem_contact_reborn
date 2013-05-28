@@ -10,16 +10,13 @@ function zem_contact($atts, $thing = null)
         'copysender'   => 0,
         'form'         => '',
         'from'         => '',
-        'from_form'    => '',
         'label'        => gTxt('zem_contact_reborn_contact'),
         'redirect'     => '',
         'show_error'   => 1,
         'show_input'   => 1,
         'send_article' => 0,
         'subject'      => gTxt('zem_contact_reborn_email_subject', array('{sitename}' => $sitename), false),
-        'subject_form' => '',
         'to'           => '',
-        'to_form'      => '',
         'thanks'       => graf(gTxt('zem_contact_reborn_email_thanks')),
         'thanks_form'  => '',
     ), $atts));
@@ -89,11 +86,6 @@ function zem_contact($atts, $thing = null)
         $form = parse($thing);
     }
 
-    if ($to_form)
-    {
-        $to = parse(fetch_form($to_form));
-    }
-
     if (!$to and !$send_article)
     {
         return gTxt('zem_contact_reborn_to_missing');
@@ -130,16 +122,6 @@ function zem_contact($atts, $thing = null)
         $clean = $evaluation->get_zemcontact_status();
         if ($clean != 0) {
             return gTxt('zem_contact_reborn_spam');
-        }
-
-        if ($from_form)
-        {
-            $from = parse(fetch_form($from_form));
-        }
-
-        if ($subject_form)
-        {
-            $subject = parse(fetch_form($subject_form));
         }
 
         $sep = !is_windows() ? "\n" : "\r\n";
