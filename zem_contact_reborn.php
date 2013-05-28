@@ -1,6 +1,6 @@
 <?php
 
-function zem_contact($atts, $thing = '')
+function zem_contact($atts, $thing = null)
 {
     global $sitename, $prefs, $production_status, $zem_contact_from,
         $zem_contact_recipient, $zem_contact_error, $zem_contact_submit,
@@ -80,9 +80,14 @@ function zem_contact($atts, $thing = '')
         safe_insert('txp_discuss_nonce', "issue_time = now(), nonce = '$zem_contact_nonce'");
     }
 
-    $form = ($form) ? fetch_form($form) : $thing;
-
-    $form = parse($form);
+    if ($thing === null)
+    {
+        $form = parse_form($form);
+    }
+    else
+    {
+        $form = parse($thing);
+    }
 
     if ($to_form)
     {
