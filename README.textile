@@ -1,4 +1,4 @@
-h1. zem_contact_reborn
+h1. zem_contact
 
 p. Flexible contact form plugin for "Textpattern CMS":http://textpattern.com.
 
