@@ -25,13 +25,6 @@ function zem_contact($atts, $thing = null)
     $zem_contact_form_id = md5(serialize($atts).preg_replace('/[\t\s\r\n]/','',$thing));
     $zem_contact_submit = (ps('zem_contact_form_id') == $zem_contact_form_id);
 
-    if (!is_callable('mail'))
-    {
-        return ($production_status == 'live') ?
-            gTxt('zem_contact_reborn_mail_sorry') :
-            gTxt('warn_mail_unavailable');
-    }
-
     if (headers_sent() === false)
     {
         header('Last-Modified: '.gmdate('D, d M Y H:i:s',time()-3600*24*7).' GMT');
