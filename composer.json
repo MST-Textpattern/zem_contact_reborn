@@ -56,7 +56,7 @@
         "source": "https://github.com/gocom/zem_contact_reborn"
     },
     "require": {
-        "textpattern/lock": ">=4.0.7",
+        "textpattern/lock": ">=4.5.0,<4.7.0",
         "textpattern/installer": "*"
     }
 }
