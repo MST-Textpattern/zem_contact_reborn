@@ -7,21 +7,21 @@ function zem_contact($atts, $thing = '')
         $zem_contact_form, $zem_contact_labels, $zem_contact_values;
 
     extract(zem_contact_lAtts(array(
-        'copysender'    => 0,
-        'form'        => '',
-        'from'        => '',
+        'copysender'   => 0,
+        'form'         => '',
+        'from'         => '',
         'from_form'    => '',
         'label'        => gTxt('zem_contact_reborn_contact'),
-        'redirect'    => '',
-        'show_error'    => 1,
-        'show_input'    => 1,
-        'send_article'    => 0,
-        'subject'    => gTxt('zem_contact_reborn_email_subject', array('{sitename}' => $sitename), false),
-        'subject_form'    => '',
-        'to'        => '',
-        'to_form'    => '',
-        'thanks'    => graf(gTxt('zem_contact_reborn_email_thanks')),
-        'thanks_form'    => ''
+        'redirect'     => '',
+        'show_error'   => 1,
+        'show_input'   => 1,
+        'send_article' => 0,
+        'subject'      => gTxt('zem_contact_reborn_email_subject', array('{sitename}' => $sitename), false),
+        'subject_form' => '',
+        'to'           => '',
+        'to_form'      => '',
+        'thanks'       => graf(gTxt('zem_contact_reborn_email_thanks')),
+        'thanks_form'  => '',
     ), $atts));
 
     unset($atts['show_error'], $atts['show_input']);
