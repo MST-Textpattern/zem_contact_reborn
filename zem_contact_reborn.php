@@ -43,7 +43,7 @@ function zem_contact($atts, $thing = '')
         $headers_sent = true;
     }
 
-    $nonce   = mysql_real_escape_string(ps('zem_contact_nonce'));
+    $nonce   = doSlash(ps('zem_contact_nonce'));
     $renonce = false;
 
     if ($zem_contact_submit)
