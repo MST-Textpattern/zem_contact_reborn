@@ -1,0 +1,62 @@
+{
+    "name": "rah/zem_contact_reborn",
+    "description": "Flexible contact form plugin for Textpattern CMS",
+    "keywords": ["textpattern", "plugin"],
+    "homepage": "https://github.com/gocom/zem_contact_reborn",
+    "license": "GPL-2.0",
+    "type": "textpattern-plugin",
+    "authors": [
+        {
+            "name": "Jukka Svahn",
+            "homepage": "http://rahforum.biz",
+            "role": "Developer"
+        },
+        {
+            "name": "Alex Shiels",
+            "homepage": "http://forum.textpattern.com/profile.php?id=555",
+            "role": "Developer"
+        },
+        {
+            "name": "Mary",
+            "homepage": "http://utterplush.com/",
+            "role": "Developer"
+        },
+        {
+            "name": "Stuart",
+            "role": "Developer"
+        },
+        {
+            "name": "Ruud van Melick",
+            "homepage": "http://vanmelick.com/",
+            "role": "Developer"
+        },
+        {
+            "name": "Robert Wetzlmayr",
+            "homepage": "http://awasteofwords.com/",
+            "role": "Developer"
+        },
+        {
+            "name": "Tranquillo",
+            "homepage": "http://forum.textpattern.com/profile.php?id=4396",
+            "role": "Developer"
+        },
+        {
+            "name": "Anura",
+            "homepage": "http://forum.textpattern.com/profile.php?id=1972",
+            "role": "Developer"
+        },
+        {
+            "name": "Jason",
+            "homepage": "http://forum.textpattern.com/profile.php?id=3525",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/gocom/zem_contact_reborn/issues",
+        "source": "https://github.com/gocom/zem_contact_reborn"
+    },
+    "require": {
+        "textpattern/lock": ">=4.0.7",
+        "textpattern/installer": "*"
+    }
+}
