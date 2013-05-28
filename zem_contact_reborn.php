@@ -209,36 +209,8 @@ function zem_contact($atts, $thing = null)
 
             if ($redirect)
             {
-                while (@ob_end_clean());
-                $uri = hu.ltrim($redirect,'/');
-                if (empty($_SERVER['FCGI_ROLE']) and empty($_ENV['FCGI_ROLE']))
-                {
-                    txp_status_header('303 See Other');
-                    header('Location: '.$uri);
-                    header('Connection: close');
-                    header('Content-Length: 0');
-                }
-                else
-                {
-                    $uri = htmlspecialchars($uri);
-                    $refresh = gTxt('zem_contact_reborn_refresh');
-                    echo <<<END
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-    <title>$sitename</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="refresh" content="0;url=$uri" />
-</head>
-<body>
-<a href="$uri">$refresh</a>
-</body>
-</html>
-END;
-                }
-                exit;
+                txp_die($msg, '302', hu.ltrim($redirect, '/'));
             }
-
             else
             {
                 return '<div class="zemThanks" id="zcr'.$zem_contact_form_id.'">' .
